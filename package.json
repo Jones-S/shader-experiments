@@ -1,0 +1,22 @@
+{
+  "name": "shader-experiments",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://Jones-S@github.com/Jones-S/shader-experiments.git"
+  },
+  "author": "Jonas Scheiwiller",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jones-S/shader-experiments/issues"
+  },
+  "homepage": "https://github.com/Jones-S/shader-experiments",
+  "dependencies": {
+    "three": "^0.80.1"
+  }
+}
