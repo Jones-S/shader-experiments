@@ -20,13 +20,8 @@
         var texture = texloader.load("img/color.jpeg");
 
         var uniforms = {
-            u_texture: {type: 't', value: texture},
+            u_texture: {type: 't', value: texture}
         };
-
-
-        // var attributes = {
-        //     a_texCoord: {type: 'v2', value: new THREE.Vector2()}
-        // };
 
         // create the final material
         var shaderMaterial = new THREE.ShaderMaterial({
