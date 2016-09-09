@@ -64,25 +64,11 @@
         // BufferAttribute( array, itemSize, normalized )
         geometry.addAttribute('a_texCoord', new THREE.BufferAttribute(vertices, 1));
 
-        // add another set of uv
-        var uvs = geometry.attributes.uv.array;
-        console.log("uvs: ", uvs);
-        uvs[0] = 1;
-        uvs[1] = 0;
-        uvs[2] = 0.5;
-        uvs[3] = 0.2;
-        uvs[4] = 0.9;
-        uvs[5] = 0.1;
-        uvs[6] = 0;
-        uvs[7] = 1;
-        console.log("uvs: ", uvs);
-        geometry.addAttribute( 'uv2', new THREE.BufferAttribute( uvs, 2 ) );
-
         // var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         var plane = new THREE.Mesh( geometry, shaderMaterial );
         scene.add(plane);
 
-        plane.rotation.y += 0.2;
+        // plane.rotation.y += 0.2;
 
         var render = function () {
             requestAnimationFrame(render);
