@@ -17,7 +17,7 @@
         var fragShader = document.getElementById('fragmentshader').innerHTML;
 
         var texloader = new THREE.TextureLoader();
-        var texture = texloader.load("img/color.jpeg");
+        var texture = texloader.load("img/color_po2.jpg");
 
         var uniforms = {
             u_texture: {type: 't', value: texture}
@@ -37,13 +37,16 @@
         var plane = {
             width: 5,
             height: 5,
-            widthSegments: 10,
-            heightSegments: 15
+            widthSegments: 6,
+            heightSegments: 6
         }
 
         var geometry = new THREE.PlaneBufferGeometry(plane.width, plane.height, plane.widthSegments, plane.heightSegments)
         var vertices = new Float32Array(geometry.attributes.position.count); // create an array with as many empty slots as the sphere has vertices
-        console.log("vertices: ", vertices);
+        // console.log("vertices: ", vertices);
+        for (var v = 0; v < vertices.length; v++) {
+            vertices[v] = Math.random() * 3;
+        }
 
         // BufferAttribute( array, itemSize, normalized )
         geometry.addAttribute('a_texCoord', new THREE.BufferAttribute(vertices, 1));
