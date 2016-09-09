@@ -82,7 +82,7 @@
             }
 
             void main() {
-                vec2 p = ( vUv.xy - 0.5 ) * resolution;
+                vec2 p = ( vUv.xy) * resolution;
                 float rz = dualfbm( p );
 
                 vec3 col = ( color / rz ) * brightness;

@@ -18,6 +18,7 @@
 
         var texloader = new THREE.TextureLoader();
         var texture = texloader.load("img/noise.png");
+        // var texture = texloader.load("img/color_po2.png");
 
         var color = {
             r: 1,
@@ -30,7 +31,7 @@
             time:           {type: 'f', value: 1},
             contrast:       {type: 'f', value: 1.5},
             distortion:     {type: 'f', value: 2},
-            speed:          {type: 'f', value: 0.02},
+            speed:          {type: 'f', value: 0.01},
             brightness:     {type: 'f', value: 0.1},
             color:          {type: 'v3', value: new THREE.Vector3( color.r, color.g, color.b)},
             resolution:     {type: 'v2', value: new THREE.Vector2(1, 1)}
