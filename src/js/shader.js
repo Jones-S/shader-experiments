@@ -1,24 +1,61 @@
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+(function ($) { // iief = Immediately-Invoked Function Expression, mainly useful to limit scope
+    $(function() { // Shorthand for $( document ).ready()
 
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+        // set some camera attributes
+        var VIEW_ANGLE = 45,
+            ASPECT = window.innerWidth/window.innerHeight,
+            NEAR = 0.1,
+            FAR = 1000;
 
-var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-var cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
+        var scene = new THREE.Scene();
 
-camera.position.z = 5;
 
-var render = function () {
-    requestAnimationFrame(render);
+        var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+        camera.position.set(0, 0, 15);
 
-    cube.rotation.x += 0.1;
-    cube.rotation.y += 0.1;
+        var vertShader = document.getElementById('vertexshader').innerHTML;
+        var fragShader = document.getElementById('fragmentshader').innerHTML;
 
-    renderer.render(scene, camera);
-};
+        var uniforms = {
+            texture1: { type: 't', value: 0, texture: THREE.ImageUtils.loadTexture( 'img/color.jpeg' ) }
+        };
 
-render();
+        // create the final material
+        var shaderMaterial = new THREE.ShaderMaterial({
+            uniforms:       uniforms,
+            vertexShader:   vertShader,
+            fragmentShader: fragShader
+        });
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild(renderer.domElement);
+
+        var plane = {
+            width: 5,
+            height: 5,
+            widthSegments: 10,
+            heightSegments: 15
+        }
+
+        var geometry = new THREE.PlaneBufferGeometry(plane.width, plane.height, plane.widthSegments, plane.heightSegments)
+
+        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        var plane = new THREE.Mesh( geometry, material );
+        scene.add(plane);
+
+        plane.rotation.y += 15;
+
+        var render = function () {
+            requestAnimationFrame(render);
+
+            plane.rotation.x += 0.1;
+
+            renderer.render(scene, camera);
+        };
+
+        render();
+
+    });
+}(jQuery));
+
