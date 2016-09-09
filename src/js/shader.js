@@ -17,10 +17,23 @@
         var fragShader = document.getElementById('fragmentshader').innerHTML;
 
         var texloader = new THREE.TextureLoader();
-        var texture = texloader.load("img/color_po2.jpg");
+        var texture = texloader.load("img/noise.png");
+
+        var color = {
+            r: 1,
+            g: 1,
+            b: 1
+        }
 
         var uniforms = {
-            u_texture: {type: 't', value: texture}
+            noiseImage:     {type: 't', value: texture},
+            time:           {type: 'f', value: 1},
+            contrast:       {type: 'f', value: 1.5},
+            distortion:     {type: 'f', value: 2},
+            speed:          {type: 'f', value: 0.02},
+            brightness:     {type: 'f', value: 0.1},
+            color:          {type: 'v3', value: new THREE.Vector3( color.r, color.g, color.b)},
+            resolution:     {type: 'v2', value: new THREE.Vector2(1, 1)}
         };
 
         // create the final material
@@ -37,8 +50,8 @@
         var plane = {
             width: 5,
             height: 5,
-            widthSegments: 6,
-            heightSegments: 6
+            widthSegments: 1,
+            heightSegments: 1
         }
 
         var geometry = new THREE.PlaneBufferGeometry(plane.width, plane.height, plane.widthSegments, plane.heightSegments)
@@ -51,6 +64,20 @@
         // BufferAttribute( array, itemSize, normalized )
         geometry.addAttribute('a_texCoord', new THREE.BufferAttribute(vertices, 1));
 
+        // add another set of uv
+        var uvs = geometry.attributes.uv.array;
+        console.log("uvs: ", uvs);
+        uvs[0] = 1;
+        uvs[1] = 0;
+        uvs[2] = 0.5;
+        uvs[3] = 0.2;
+        uvs[4] = 0.9;
+        uvs[5] = 0.1;
+        uvs[6] = 0;
+        uvs[7] = 1;
+        console.log("uvs: ", uvs);
+        geometry.addAttribute( 'uv2', new THREE.BufferAttribute( uvs, 2 ) );
+
         // var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         var plane = new THREE.Mesh( geometry, shaderMaterial );
         scene.add(plane);
@@ -59,6 +86,8 @@
 
         var render = function () {
             requestAnimationFrame(render);
+
+            uniforms.time.value += 0.2;
 
             // plane.rotation.x += 0.1;
 

@@ -19,28 +19,83 @@
 
     	</div>
         <script type="x-shader/x-vertex" id="vertexshader">
-            varying vec2 v_texCoord;
-            attribute float a_texCoord;
+
+            attribute vec2 uv2;
+            // Examples of variables passed from vertex to fragment shader
+            varying vec3 vPosition;
+            varying vec3 vNormal;
+            varying vec2 vUv;
+            varying vec2 vUv2;
 
             void main() {
-                // Pass the texcoord to the fragment shader.
-                v_texCoord = uv;
 
-                vec3 newPosition = position + normal * vec3(a_texCoord);
+               // To pass variables to the fragment shader, you assign them here in the
+               // main function. Traditionally you name the varying with vAttributeName
+               vNormal = normal;
+               vUv = uv;
+               vUv2 = uv2;
+               vPosition = position;
 
-                gl_Position = projectionMatrix *
-                              modelViewMatrix *
-                              vec4(newPosition, 1.0);
+               // This sets the position of the vertex in 3d space. The correct math is
+               // provided below to take into account camera and object data.
+               gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
             }
         </script>
 
         <script type="x-shader/x-fragment" id="fragmentshader">
-            uniform sampler2D u_texture;
-            varying vec2 v_texCoord;
+            #define tau 6.2831853
+
+            uniform float time;
+            uniform float contrast;
+            uniform float distortion;
+            uniform float speed;
+            uniform vec3 color;
+            uniform float brightness;
+            uniform sampler2D noiseImage;
+            uniform vec2 resolution;
+
+            varying vec2 vUv;
+
+            mat2 makem2(in float theta) {
+                float c = cos(theta);
+                float s = sin(theta);
+                return mat2(c, -s, s, c);
+            }
+
+            float noise(in vec2 x) {
+                return texture2D(noiseImage, x * .01).x;
+            }
+
+            float fbm(in vec2 p) {
+                float z = 2.;
+                float rz = 0.;
+                vec2 bp = p;
+                for (float i = 1.; i < 6.0; i++) {
+                    rz += abs((noise(p) - 0.5) * 2.0) / z;
+                    z = z * 2.;
+                    p = p * 2.;
+                }
+                return rz;
+            }
+
+            float dualfbm(in vec2 p) {
+                vec2 p2 = p * distortion;
+                vec2 basis = vec2(fbm(p2 - time * speed * 1.6), fbm(p2 + time * speed * 1.7));
+                basis = (basis - .5) * .2;
+                p += basis;
+                return fbm(p * makem2(time *  speed * 0.2));
+            }
 
             void main() {
-                vec4 color = texture2D(u_texture, v_texCoord);
-                gl_FragColor = color;
+                vec2 p = ( vUv.xy - 0.5 ) * resolution;
+                float rz = dualfbm( p );
+
+                vec3 col = ( color / rz ) * brightness;
+
+                col = ( (col - 0.5 ) * max( contrast, 0.0 ) ) + 0.5;
+
+                gl_FragColor = vec4( col, 1.0 );
             }
 
         </script>
