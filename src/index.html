@@ -61,31 +61,36 @@
                 return texture2D(noiseImage, x * .01).x; //.x taking only the x coordinate
             }
 
-            float fbm(in vec2 p) {
-                float z = 2.;
-                float rz = 0.;
+            // what is a fractal Brownian Motion:
+            // Read this: https://thebookofshaders.com/13/
+            float fractalBrownianMotion(in vec2 p) {
+                float amplitude = 2.0;
+                float value = 0.0;
                 vec2 bp = p;
-                for (float i = 1.; i < 6.0; i++) {
-                    rz += abs((noise(p) - 0.5) * 2.0) / z;
-                    z = z * 2.;
-                    p = p * 2.;
+                const float OCTAVES = 6.0; // needs to be a constant float...
+
+                for (float i = 1.; i < OCTAVES; i++) {
+                    // because the noise is signed (only positive values) this is called turbulence and not fBM anymore
+                    value += abs((noise(p) - 0.5) * 2.0) / amplitude;
+                    amplitude = amplitude * 2.0;
+                    p = p * 2.0;
                 }
-                return rz;
+                return value;
             }
 
             float dualFractalBrownianMotion(in vec2 p) {
                 vec2 p2 = p * distortion;
                 vec2 basis = vec2(
-                    fbm(p2 - time * speed * 1.6),
-                    fbm(p2 + time * speed * 1.7));
+                    fractalBrownianMotion(p2 - time * speed * 1.6),
+                    fractalBrownianMotion(p2 + time * speed * 1.7));
                 basis = (basis - .5) * .2;
                 p += basis;
-                return fbm(p * makeMatrix2(time *  speed * 0.2));
+                return fractalBrownianMotion(p * makeMatrix2(time *  speed * 0.2));
             }
 
             void main() {
-                vec2 p = (vUv.xy) * resolution;
-                float rz = dualFractalBrownianMotion( p );
+                vec2 point = (vUv.xy) * resolution; //take the x and y coordinate an multiply with the resolution
+                float rz = dualFractalBrownianMotion(point);
 
                 vec3 col = (color / rz) * brightness;
 
